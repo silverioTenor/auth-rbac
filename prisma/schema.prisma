@@ -22,7 +22,7 @@ enum Roles {
 }
 
 model UserDB {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
