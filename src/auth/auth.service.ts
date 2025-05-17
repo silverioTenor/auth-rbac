@@ -3,6 +3,7 @@ import { LoginDto } from './dto/login-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { RegisterDto } from './dto/register-dto';
 
 @Injectable()
 export class AuthService {
@@ -36,5 +37,18 @@ export class AuthService {
       });
 
       return { access_token: token };
+   }
+
+   async register(registerDto: RegisterDto) {
+      if (registerDto?.role !== 'ADMIN') {
+         registerDto.role = 'ADMIN';
+      }
+
+      return this.prismaService.userDB.create({
+         data: {
+            ...registerDto,
+            password: bcrypt.hashSync(registerDto.password, 10),
+         },
+      });
    }
 }
