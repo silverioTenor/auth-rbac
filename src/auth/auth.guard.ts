@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
       private prismaService: PrismaService,
    ) {}
 
-   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+   async canActivate(context: ExecutionContext): Promise<boolean>{
       const request: Request = context.switchToHttp().getRequest();
       const token = request.headers['authorization']?.split(' ')[1];
 
@@ -32,14 +32,14 @@ export class AuthGuard implements CanActivate {
       try {
          const payload = this.jwtService.verify<IAuthData>(token, { algorithms: [algorithms] });
 
-         const user = this.prismaService.userDB.findUnique({
+         const user = await this.prismaService.userDB.findUnique({
             where: { id: payload.sub },
          });
 
          if (!user) {
             throw new UnauthorizedException('User not found');
          }
-         request.user = user as unknown as UserDB;
+         request.user = user;
       } catch (e) {
          throw new UnauthorizedException('Invalid token', { cause: e });
       }
