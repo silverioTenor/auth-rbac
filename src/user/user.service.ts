@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -27,7 +27,7 @@ export class UserService {
       });
 
       if (!foundUser) {
-         throw new HttpException('User not found', 404);
+         throw new NotFoundException('User not found');
       }
 
       // const { password, ...userWithoutPassword } = foundUser;
@@ -42,7 +42,7 @@ export class UserService {
       });
 
       if (!user) {
-         throw new HttpException('User not found', 404);
+         throw new NotFoundException('User not found');
       }
 
       const password = updateUserDto.password

@@ -1,9 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/login-dto';
 import { PrismaService } from '../prisma/prisma.service';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { access } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -20,19 +19,20 @@ export class AuthService {
       });
 
       if (!user) {
-         throw new HttpException('Invalid credentials', 400);
+         throw new UnauthorizedException('Invalid credentials');
       }
 
       const isPasswordValid = await bcrypt.compare(login.password, user.password);
 
       if (!isPasswordValid) {
-         throw new HttpException('Invalid credentials', 400);
+         throw new UnauthorizedException('Invalid credentials');
       }
 
       const token = this.jwtService.sign({
          email: user.email,
          name: user.name,
          role: user.role,
+         sub: user.id,
       });
 
       return { access_token: token };

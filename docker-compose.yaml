@@ -26,7 +26,7 @@ services:
     container_name: postgres-db
     restart: always
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: silverio
       POSTGRES_PASSWORD: root
       POSTGRES_DB: auth-db
     ports:
